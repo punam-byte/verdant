@@ -1,0 +1,6 @@
+{
+  "name": "Verdant Botanical Sanctuary & Garden Planner",
+  "description": "An editorial sanctuary website featuring heirloom nursery plants, an interactive companion-planting garden bed planner, seasonal care almanac, plant clinic diagnostics, and conservatory visits.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
