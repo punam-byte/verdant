@@ -23,10 +23,10 @@ export const Footer: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
               <span className="w-8 h-8 rounded-full bg-[#FAF9F6] text-[#13241B] flex items-center justify-center font-serif text-lg font-bold">
-                V
+                P
               </span>
               <span className="font-serif text-2xl font-bold tracking-tight text-[#FAF9F6]">
-                Verdant Sanctuary
+                The Paradise Garden Service
               </span>
             </div>
 
@@ -98,7 +98,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar: Quiet Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#7A9E88] gap-4 font-mono">
           <div>
-            © 2026 Verdant Botanical Sanctuary & Nursery. Registered Hub: Mani Nagar, Pandesara, Surat.
+            © 2026 The Paradise Garden Service. Registered Hub: Mani Nagar, Pandesara, Surat.
           </div>
           <div className="flex items-center gap-4">
             <span>Direct Line: +91 9837652655</span>

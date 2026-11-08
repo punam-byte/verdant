@@ -481,7 +481,7 @@ export const GardenBedPlanner: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-wider text-[#788E81]">
-                    Verdant Botanical Sanctuary Field Guide
+                    The Paradise Garden Service Field Guide
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-[#13241B]">
                     Custom Raised Bed Planting Blueprint

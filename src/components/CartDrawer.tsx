@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plant } from '../data/plants';
-import { X, Trash2, ShoppingBag, Truck, MapPin, CheckCircle, ArrowRight } from 'lucide-react';
+import { X, Trash2, ShoppingBag, Truck, MapPin, CheckCircle, ArrowRight, MessageSquare, Mail, Bell } from 'lucide-react';
 
 import { UserProfile } from './AuthModal';
 
@@ -17,6 +17,19 @@ interface CartDrawerProps {
   onRemoveItem: (plantId: string) => void;
   onClearCart: () => void;
   user?: UserProfile;
+  onOrderPlaced?: (order: {
+    orderId: string;
+    customerName: string;
+    customerPhone: string;
+    customerEmail: string;
+    customerAddress: string;
+    items: string[];
+    total: number;
+    fulfillment: string;
+    date: string;
+  }) => void;
+  onOpenNotifications?: () => void;
+  onOpenGmailHub?: (params?: { recipient?: string; subject?: string; body?: string }) => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -27,12 +40,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   onClearCart,
   user,
+  onOrderPlaced,
+  onOpenNotifications,
+  onOpenGmailHub,
 }) => {
   const [fulfillment, setFulfillment] = useState<'pickup' | 'delivery'>('pickup');
   const [pickupDate, setPickupDate] = useState<string>('2026-11-12');
   const [customerName, setCustomerName] = useState<string>(user?.name || 'Nitin Kushwaha');
   const [customerPhone, setCustomerPhone] = useState<string>(user?.phone || '9837652655');
-  const [customerEmail, setCustomerEmail] = useState<string>(user?.email || 'nitin.kushwaha@verdant.org');
+  const [customerEmail, setCustomerEmail] = useState<string>(user?.email || 'majumderp937@gmail.com');
   const [customerAddress, setCustomerAddress] = useState<string>(user?.address || 'Mani Nagar, Pandesara, Surat');
   const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(null);
 
@@ -53,8 +69,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerEmail) return;
-    const orderId = `VRD-ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+    const orderId = `PGS-ORD-${Math.floor(10000 + Math.random() * 90000)}`;
     setConfirmedOrderId(orderId);
+
+    if (onOrderPlaced) {
+      onOrderPlaced({
+        orderId,
+        customerName,
+        customerPhone,
+        customerEmail,
+        customerAddress,
+        items: cart.map((i) => `${i.quantity}x ${i.plant.name}`),
+        total,
+        fulfillment: fulfillment === 'pickup' ? 'Surat Nursery Pickup' : 'Climate Courier',
+        date: pickupDate,
+      });
+    }
   };
 
   const handleFinish = () => {
@@ -92,7 +122,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {/* Body */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {confirmedOrderId ? (
-              <div className="py-8 text-center space-y-4">
+              <div className="py-6 text-center space-y-4">
                 <div className="w-14 h-14 rounded-full bg-[#EAEFE8] text-[#2D5A3F] flex items-center justify-center mx-auto border border-[#C8D6C4]">
                   <CheckCircle className="w-8 h-8" />
                 </div>
@@ -103,6 +133,59 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   Thank you, <strong className="text-[#13241B]">{customerName}</strong>! Your order
                   has been routed to our Surat greenhouse staging team.
                 </p>
+
+                {/* Live Notification Dispatched Alert */}
+                <div className="p-3.5 bg-[#EEF4ED] border border-[#C8DBC4] rounded-2xl text-left space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A3828]">
+                    <Bell className="w-4 h-4 text-[#2D5A3F]" />
+                    <span>Dispatched Alerts (Live Sandbox Delivery)</span>
+                  </div>
+                  <div className="text-[11px] text-[#33463B] space-y-1 font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-[#0284C7]" />
+                      <span>SMS Sent to: <strong>+91 {customerPhone}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Mail className="w-3.5 h-3.5 text-[#D97706]" />
+                      <span>Email Sent to: <strong>{customerEmail}</strong></span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-[#55695C] leading-normal pt-1 border-t border-[#D9E6D5]">
+                    Notice: External cellular SMS and real external email gateways are simulated in this browser sandbox. All delivered messages are logged in the Dispatch Center.
+                  </p>
+                  {onOpenNotifications && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenNotifications();
+                      }}
+                      className="w-full py-2 px-3 bg-[#1A3828] text-white text-xs font-semibold rounded-xl hover:bg-[#254F39] transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                    >
+                      <Bell className="w-3.5 h-3.5" />
+                      <span>Open Notification Center & View Dispatches</span>
+                    </button>
+                  )}
+                  {onOpenGmailHub && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenGmailHub({
+                          recipient: customerEmail,
+                          subject: `Order Receipt #${confirmedOrderId} - The Paradise Garden Service`,
+                          body: `Dear ${customerName},\n\nYour heirloom botanical order ${confirmedOrderId} has been confirmed.\n\nORDER DETAILS:\n• Fulfillment: ${fulfillment === 'pickup' ? 'Surat Nursery Pickup' : 'Climate Courier'}\n• Scheduled Date: ${pickupDate}\n• Destination: ${customerAddress}\n• Total Paid: ₹${total.toLocaleString('en-IN')}\n\nWarm regards,\nThe Paradise Garden Service Team\nMani Nagar, Pandesara, Surat`,
+                        });
+                      }}
+                      className="w-full py-2 px-3 bg-white border border-[#DCE4DA] text-[#13241B] text-xs font-semibold rounded-xl hover:bg-[#F2F5F0] transition-colors flex items-center justify-center gap-2 shadow-xs"
+                    >
+                      <div className="w-3.5 h-3.5 rounded-full bg-[#EA4335] text-white flex items-center justify-center text-[8px] font-bold">
+                        M
+                      </div>
+                      <span>Send Real Email via Your Gmail Account</span>
+                    </button>
+                  )}
+                </div>
 
                 <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-[#DCE4DA] text-left text-xs space-y-2 font-mono">
                   <div className="flex justify-between">

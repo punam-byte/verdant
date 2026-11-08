@@ -31,13 +31,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLogout,
 }) => {
   const [mode, setMode] = useState<'login' | 'register' | 'profile'>('login');
-  const [phoneInput, setPhoneInput] = useState('9837652655');
-  const [nameInput, setNameInput] = useState('Nitin Kushwaha');
-  const [addressInput, setAddressInput] = useState('Mani Nagar, Pandesara, Surat');
-  const [emailInput, setEmailInput] = useState('nitin.kushwaha@verdant.org');
+  const [phoneInput, setPhoneInput] = useState(user.phone || '9837652655');
+  const [nameInput, setNameInput] = useState(user.name || 'Nitin Kushwaha');
+  const [addressInput, setAddressInput] = useState(user.address || 'Mani Nagar, Pandesara, Surat');
+  const [emailInput, setEmailInput] = useState(user.email || 'majumderp937@gmail.com');
   const [passwordInput, setPasswordInput] = useState('••••••••');
   const [isEditing, setIsEditing] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (user.phone) setPhoneInput(user.phone);
+    if (user.name) setNameInput(user.name);
+    if (user.address) setAddressInput(user.address);
+    if (user.email) setEmailInput(user.email);
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -96,14 +103,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="p-6 border-b border-[#E7ECE4] bg-[#FAF9F6] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#1A3828] text-white flex items-center justify-center font-serif text-sm font-bold">
-              {user.isLoggedIn ? user.name.slice(0, 1) : 'V'}
+              {user.isLoggedIn ? user.name.slice(0, 1) : 'P'}
             </div>
             <div>
               <h3 className="font-serif text-lg font-bold text-[#13241B]">
-                {user.isLoggedIn ? 'Botanical Member Portal' : 'Member Login & Sign In'}
+                {user.isLoggedIn ? 'The Paradise Member Portal' : 'Member Login & Sign In'}
               </h3>
               <p className="text-[11px] text-[#788E81] font-mono">
-                Season 2026 · Verdant Sanctuary
+                Season 2026 · The Paradise Garden Service
               </p>
             </div>
           </div>
@@ -132,7 +139,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="p-5 rounded-2xl bg-gradient-to-br from-[#1A3828] to-[#254F39] text-white shadow-md relative overflow-hidden">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[11px] font-mono tracking-wider text-[#A8C2B2] uppercase">
-                    Verdant Fellow Member 2026
+                    The Paradise Garden Fellow 2026
                   </span>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#3B7252] text-[10px] font-mono font-bold">
                     Active 2026
@@ -220,7 +227,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <div className="p-4 rounded-xl bg-[#FAF9F6] border border-[#E7ECE4] text-xs space-y-2">
                     <div className="flex justify-between items-center text-[#788E81]">
                       <span>Member ID:</span>
-                      <span className="font-mono font-bold text-[#13241B]">VRD-SURAT-2026</span>
+                      <span className="font-mono font-bold text-[#13241B]">PGS-SURAT-2026</span>
                     </div>
                     <div className="flex justify-between items-center text-[#788E81]">
                       <span>Regional Chapter:</span>

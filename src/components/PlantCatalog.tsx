@@ -450,7 +450,7 @@ export const PlantCatalog: React.FC<PlantCatalogProps> = ({
                           <p className="font-semibold text-[#1A3828]">Horticultural Substrate Formulation:</p>
                           <p>{activeModalPlant.soilRecipe}</p>
                           <p className="text-[11px] text-[#788E81] italic">
-                            All Verdant plants ship in 100% peat-free, responsibly sourced sustainable pine bark & coconut pith.
+                            All Paradise Garden plants ship in 100% peat-free, responsibly sourced sustainable pine bark & coconut pith.
                           </p>
                         </div>
                       )}

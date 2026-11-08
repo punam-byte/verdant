@@ -1,17 +1,32 @@
 import React, { useState } from 'react';
 import { CONSERVATORY_EVENTS, ConservatoryEvent } from '../data/workshops';
-import { Calendar, Clock, Users, Award, Check, X, Ticket } from 'lucide-react';
+import { Calendar, Clock, Users, Award, Check, X, Ticket, Bell, MessageSquare, Mail } from 'lucide-react';
 
 interface ConservatoryBookingProps {
   isOpen: boolean;
   onClose: () => void;
   preselectedEventId?: string;
+  onBookingConfirmed?: (booking: {
+    passCode: string;
+    eventTitle: string;
+    date: string;
+    time: string;
+    attendees: number;
+    total: number;
+    name: string;
+    email: string;
+  }) => void;
+  onOpenNotifications?: () => void;
+  onOpenGmailHub?: (params?: { recipient?: string; subject?: string; body?: string }) => void;
 }
 
 export const ConservatoryBooking: React.FC<ConservatoryBookingProps> = ({
   isOpen,
   onClose,
   preselectedEventId,
+  onBookingConfirmed,
+  onOpenNotifications,
+  onOpenGmailHub,
 }) => {
   const [selectedEventId, setSelectedEventId] = useState<string>(
     preselectedEventId || CONSERVATORY_EVENTS[0].id
@@ -19,8 +34,8 @@ export const ConservatoryBooking: React.FC<ConservatoryBookingProps> = ({
   const [attendeeCount, setAttendeeCount] = useState<number>(2);
   const [visitDate, setVisitDate] = useState<string>('2026-11-14');
   const [timeSlot, setTimeSlot] = useState<string>('10:30 AM');
-  const [guestName, setGuestName] = useState<string>('');
-  const [guestEmail, setGuestEmail] = useState<string>('');
+  const [guestName, setGuestName] = useState<string>('Nitin Kushwaha');
+  const [guestEmail, setGuestEmail] = useState<string>('majumderp937@gmail.com');
   const [confirmationPass, setConfirmationPass] = useState<{
     code: string;
     event: ConservatoryEvent;
@@ -38,7 +53,8 @@ export const ConservatoryBooking: React.FC<ConservatoryBookingProps> = ({
     e.preventDefault();
     if (!guestName || !guestEmail) return;
 
-    const passCode = `VRD-${Math.floor(100000 + Math.random() * 900000)}`;
+    const passCode = `PGS-${Math.floor(100000 + Math.random() * 900000)}`;
+    const total = activeEvent.pricePerPerson * attendeeCount;
     setConfirmationPass({
       code: passCode,
       event: activeEvent,
@@ -46,8 +62,21 @@ export const ConservatoryBooking: React.FC<ConservatoryBookingProps> = ({
       date: visitDate,
       slot: timeSlot,
       name: guestName,
-      total: activeEvent.pricePerPerson * attendeeCount,
+      total,
     });
+
+    if (onBookingConfirmed) {
+      onBookingConfirmed({
+        passCode,
+        eventTitle: activeEvent.title,
+        date: visitDate,
+        time: timeSlot,
+        attendees: attendeeCount,
+        total,
+        name: guestName,
+        email: guestEmail,
+      });
+    }
   };
 
   const resetAndClose = () => {
@@ -186,6 +215,55 @@ export const ConservatoryBooking: React.FC<ConservatoryBookingProps> = ({
                 <div className="text-[11px] text-[#788E81] italic">
                   Includes full access to the Conservatory Canopies, botanical refreshments, and specimen takeaway.
                 </div>
+              </div>
+
+              {/* Live Dispatches Alert */}
+              <div className="bg-[#EEF4ED] p-4 rounded-2xl border border-[#C8DBC4] max-w-md mx-auto text-left mb-6 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#1A3828]">
+                  <Bell className="w-4 h-4 text-[#2D5A3F]" />
+                  <span>Pass Dispatched to SMS & Email (Sandbox Delivery)</span>
+                </div>
+                <div className="text-[11px] text-[#33463B] font-mono space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-[#0284C7]" />
+                    <span>SMS Pass sent to: <strong>+91 9837652655</strong></span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-[#D97706]" />
+                    <span>Email Ticket sent to: <strong>{guestEmail}</strong></span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-[#55695C] leading-normal pt-1 border-t border-[#D9E6D5]">
+                  In this evaluation sandbox environment, live SMS and Gmail deliveries are logged directly inside your interactive Notification Center.
+                </p>
+                {onOpenNotifications && (
+                  <button
+                    type="button"
+                    onClick={onOpenNotifications}
+                    className="w-full py-2 px-3 bg-[#1A3828] text-white text-xs font-semibold rounded-xl hover:bg-[#254F39] transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                  >
+                    <Bell className="w-3.5 h-3.5" />
+                    <span>Open Notification Center & View Dispatches</span>
+                  </button>
+                )}
+                {onOpenGmailHub && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenGmailHub({
+                        recipient: guestEmail,
+                        subject: `Conservatory Pass: ${confirmationPass.code} - ${confirmationPass.event.title}`,
+                        body: `Dear ${guestName},\n\nYour conservatory access pass is confirmed.\n\nPASS DETAILS:\n• Reference: ${confirmationPass.code}\n• Masterclass: ${confirmationPass.event.title}\n• Scheduled: ${confirmationPass.date} at ${confirmationPass.slot}\n• Attendees: ${confirmationPass.attendees} persons\n• Total: ₹${confirmationPass.total.toLocaleString('en-IN')}\n\nLocation: The Victorian Glasshouse Pavilion, The Paradise Garden Service, Pandesara, Surat.\n\nWarm regards,\nThe Paradise Garden Service`,
+                      });
+                    }}
+                    className="w-full py-2 px-3 bg-white border border-[#DCE4DA] text-[#13241B] text-xs font-semibold rounded-xl hover:bg-[#F2F5F0] transition-colors flex items-center justify-center gap-2 shadow-xs"
+                  >
+                    <div className="w-3.5 h-3.5 rounded-full bg-[#EA4335] text-white flex items-center justify-center text-[8px] font-bold">
+                      M
+                    </div>
+                    <span>Send Real Pass via Your Gmail</span>
+                  </button>
+                )}
               </div>
 
               <button

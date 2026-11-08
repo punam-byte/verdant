@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Calendar, Compass } from 'lucide-react';
+import { ShoppingBag, Calendar, Compass, Bell, Mail } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
@@ -8,6 +8,9 @@ interface NavbarProps {
   openCart: () => void;
   openBookingModal: () => void;
   openAuthModal: () => void;
+  openNotifications: () => void;
+  openGmailHub: () => void;
+  notificationCount: number;
   userName?: string;
   isLoggedIn: boolean;
 }
@@ -19,6 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   openCart,
   openBookingModal,
   openAuthModal,
+  openNotifications,
+  openGmailHub,
+  notificationCount,
   userName,
   isLoggedIn,
 }) => {
@@ -39,10 +45,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="text-left group flex items-center gap-2.5 focus:outline-none"
         >
           <span className="w-8 h-8 rounded-full bg-[#1A3828] text-[#F7F9F6] flex items-center justify-center font-serif text-lg font-bold">
-            V
+            P
           </span>
-          <span className="font-serif text-2xl font-bold tracking-tight text-[#13241B] whitespace-nowrap shrink-0 group-hover:text-[#2D5A3F] transition-colors">
-            Verdant Sanctuary
+          <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#13241B] whitespace-nowrap shrink-0 group-hover:text-[#2D5A3F] transition-colors">
+            The Paradise Garden Service
           </span>
         </button>
 
@@ -91,7 +97,35 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Zone 3: 1 primary action & member auth */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
+          {/* Gmail Integration Hub Trigger */}
+          <button
+            onClick={openGmailHub}
+            aria-label="Open Gmail integration hub"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#13241B] bg-white hover:bg-[#F2F5F0] border border-[#DCE4DA] transition-all shadow-xs"
+            title="Open Gmail Workspace Integration (majumderp937@gmail.com)"
+          >
+            <div className="w-4 h-4 rounded-full bg-[#EA4335] text-white flex items-center justify-center text-[9px] font-bold">
+              M
+            </div>
+            <span className="hidden sm:inline">Gmail</span>
+          </button>
+
+          {/* Notification Center Trigger */}
+          <button
+            onClick={openNotifications}
+            aria-label="View SMS and email notifications"
+            className="relative p-2 rounded-lg text-[#465A4F] hover:text-[#13241B] hover:bg-[#F2F5F0] transition-colors border border-transparent hover:border-[#DCE4DA]"
+            title="View Dispatched SMS (9837652655) & Email (majumderp937@gmail.com)"
+          >
+            <Bell className="w-5 h-5" />
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#1A3828] text-white text-[10px] font-bold rounded-full flex items-center justify-center tabular-nums">
+                {notificationCount}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={openAuthModal}
             className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
